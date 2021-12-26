@@ -1,11 +1,19 @@
-set(qt_url https://download.qt.io/archive/qt/5.10/5.10.1/single/qt-everywhere-src-5.10.1.tar.xz)
-set(qt_md5 7e167b9617e7bd64012daaacb85477af)
+#set(qt_url https://download.qt.io/archive/qt/5.10/5.10.1/single/qt-everywhere-src-5.10.1.tar.xz)
+#set(qt_md5 7e167b9617e7bd64012daaacb85477af)
+
+#set(qt_url https://download.qt.io/archive/qt/5.13/5.13.2/single/qt-everywhere-src-5.13.2.tar.xz)
+#set(qt_md5 7c04c678d4ecd9e9c06747e7c17e0bb9)
+
+set(qt_url https://download.qt.io/archive/qt/5.12/5.12.6/single/qt-everywhere-src-5.12.6.tar.xz)
+set(qt_md5 287d71e71ebd97f77220873e7b131b1a)
 
 if(BUILD_OS_WINDOWS)
     # For some as of yet unknown reason, building Qt on Windows fails because it does not create moc targets.
     # Due to that we install the PyQt wheel into the built Python manually.
     return()
 endif()
+
+##QMAKE_USE += xcb in qtbase/src/plugins/platforms/xcb/gl_integrations/xcb_egl/xcb_egl.pro.
 
 set(_qt_configure_cmd "./configure")
 set(qt_options
@@ -70,11 +78,13 @@ elseif(BUILD_OS_LINUX)
 	 -L "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
+#	 -lxcb -lX11 -lXau -lxcb-xlib -lXext -lSM -lICE -lfreetype -lXrandr /srv/rootfs/usr/lib/libxcb.so.1 /srv/rootfs/usr/lib/libX11.so.6 /srv/rootfs/usr/lib/libXau.so.6 /srv/rootfs/usr/lib/libxcb-xlib.so.0 /srv/rootfs/usr/lib/libXext.so.6 /srv/rootfs/usr/lib/libXrender.so.1 /srv/rootfs/usr/lib/libz.so.1 -lXmu -lXft -lXt -lXrandr -lXrender -lXdamage -lxcb-damage -lxcb-composite -lxcb-randr -lxcb-xv -lxcb-xvmc -lxcb-xprint -lxcb-xtest -lxcb-xfixes -lxcb-xinerama -lxcb-xevie -lxcb-xf86dri -lxcb-shape -lxcb-shm -lxcb-sync -lxcb-render -lxcb-res -lxcb-screensaver -lxcb-dpms -lxcb-record -lxcb-glx -lXfixes -lXext -lX11-xcb -lX11 -lxcb -lXau -lXdmcp -lfontconfig -lfreetype -lexpat -lm -lz -lstdc++ -lglib-2.0 -lSM -lICE
+
 if(BUILD_OS_OSX)
     ExternalProject_Add(Qt
         URL ${qt_url}
         URL_MD5 ${qt_md5}
-        CONFIGURE_COMMAND ${_qt_configure_cmd} ${qt_options}
+        CONFIGURE_COMMAND PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig ${_qt_configure_cmd} ${qt_options}
         BUILD_IN_SOURCE 1
         DEPENDS OpenSSL
     )

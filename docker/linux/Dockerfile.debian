@@ -35,10 +35,45 @@ RUN rm -f "${CURA_BUILD_ENV_WORK_DIR}"/src/projects/appimagekit.cmake
 ENV PATH="${CURA_BUILD_ENV_INSTALL_DIR}/bin:${PATH}" \
     PKG_CONFIG_PATH="${CURA_BUILD_ENV_INSTALL_DIR}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
+ENV CURA_BUILD_ENV_BUILD_TYPE="${CURA_BUILD_ENV_BUILD_TYPE}" \
+    CURA_BUILD_ENV_PATH="${CURA_BUILD_ENV_INSTALL_DIR}" \
+    CURA_ARCUS_BRANCH_OR_TAG="${CURA_ARCUS_BRANCH_OR_TAG}" \
+    CURA_SAVITAR_BRANCH_OR_TAG="${CURA_SAVITAR_BRANCH_OR_TAG}"
+
+RUN apt update -y && \
+    apt upgrade -y && \
+    apt install -y \
+    fontconfig \
+    curl \
+    git \
+    libtool \
+    make \
+    file \
+    tar \
+    bzip2 \
+    freetype.* \
+    fontconfig.* \
+    xdotool \
+    x11vnc \
+    xterm
+
+RUN apt install -y gfortran python3-sip-dev python-sip-dev freetype2-demos ^libfreetype6.* "^libxcb.*" libx11-xcb-dev \
+                    libglu1-mesa-dev libxcb-xkb-dev "^libxcb.*" libx11-xcb-dev libglu1-mesa-dev libxrender-dev \
+                    libfbclient2 libodbc1 libpq5 libsybdb5 libgles2-mesa-dev libxext-dev libinput-dev libxkbcommon-dev libfontconfig1-dev \
+                    libfontconfig-dev libxcb-xinerama0-dev '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev \
+                    flex bison gperf libicu-dev libxslt-dev ruby libssl-dev libxcursor-dev libxcomposite-dev libxdamage-dev \
+                    libxrandr-dev libdbus-1-dev libfontconfig1-dev libcap-dev libxtst-dev libpulse-dev libudev-dev libpci-dev \
+                    libasound2-dev libxss-dev libegl1-mesa-dev gperf bison "^libxcb1.*" libffi-dev
+
+RUN apt install -y libgeos-dev libgeos-c1v5
+
 # Build the build environment
 RUN mkdir -p "${CURA_BUILD_ENV_WORK_DIR}"/build
 WORKDIR "${CURA_BUILD_ENV_WORK_DIR}"/build
-RUN "${CURA_BUILD_ENV_WORK_DIR}"/src/docker/build.sh "${CURA_BUILD_ENV_BUILD_TYPE}" "${CURA_BUILD_ENV_INSTALL_DIR}" "${CURA_BUILD_ENV_WORK_DIR}"/src
+
+RUN echo "${CURA_BUILD_ENV_WORK_DIR}"/src/docker/build.ubuntu.sh "${CURA_BUILD_ENV_BUILD_TYPE}" "${CURA_BUILD_ENV_INSTALL_DIR}" "${CURA_BUILD_ENV_WORK_DIR}"/src
+#RUN "${CURA_BUILD_ENV_WORK_DIR}"/src/docker/build.ubuntu.sh "${CURA_BUILD_ENV_BUILD_TYPE}" "${CURA_BUILD_ENV_INSTALL_DIR}" "${CURA_BUILD_ENV_WORK_DIR}"/src
+RUN "${CURA_BUILD_ENV_WORK_DIR}"/src/docker/build.ubuntu.sh "${CURA_BUILD_ENV_WORK_DIR}"/src
 
 
 # Cleanup
